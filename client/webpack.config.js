@@ -46,6 +46,21 @@ module.exports = () => {
 
     module: {
       rules: [
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
+        },
+
+        {
+          test: /\.js$/,
+          exclude: /node_modules/,
+          use: {
+            loader: 'bable-loader',
+            options: {
+              presets: ['@babel/preset-env'],
+            },
+          },
+        },
         
       ],
     },
