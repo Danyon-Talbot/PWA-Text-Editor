@@ -31,7 +31,7 @@ module.exports = () => {
         theme_color: '#444444',
         icons: [
           {
-            src: path.resolve('src/images.logo.png'),
+            src: path.resolve('src/images/logo.png'),
             sizes: [96, 128, 192, 256, 384, 512],
             destination: path.join('icons'),
           },
@@ -55,7 +55,7 @@ module.exports = () => {
           test: /\.js$/,
           exclude: /node_modules/,
           use: {
-            loader: 'bable-loader',
+            loader: 'babel-loader',
             options: {
               presets: ['@babel/preset-env'],
             },
