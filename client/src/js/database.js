@@ -39,18 +39,17 @@ export const putDb = async (content) => {
 // TODO: Add logic for a method that gets all the content from the database
 export const getDb = async () => {
   try {
-    // Make sure this version number matches the one used in initdb
+    console.log('GET all from the database');
     const db = await openDB('jate', 1); 
     const tx = db.transaction('jate', 'readonly');
     const store = tx.objectStore('jate');
-    const allNotes = await store.getAll();
-    console.log('All Notes Retrieved', allNotes);
-    return allNotes;
+    const request = store.getAll();
+    const result = await request
+    console.log('All Notes Retrieved', result);
+    return result;
   } catch (error) {
     console.error("Error Retrieving All Notes", error);
   }
 };
 
-
 initdb();
-//testAddToDb();

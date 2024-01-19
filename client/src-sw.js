@@ -4,6 +4,7 @@ const { registerRoute } = require('workbox-routing');
 const { CacheableResponsePlugin } = require('workbox-cacheable-response');
 const { ExpirationPlugin } = require('workbox-expiration');
 const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
+console.log("Service Worker Installed");
 
 precacheAndRoute(self.__WB_MANIFEST);
 
@@ -30,7 +31,12 @@ registerRoute(({ request }) => request.mode === 'navigate', pageCache);
 registerRoute(
   ({ request }) =>
     request.destination === 'style' ||
-    request.destination === 'script' ||
+    request.destination === 'script',
+  pageCache
+);
+
+registerRoute(
+  ({ request }) =>
     request.destination === 'image',
   new CacheFirst({
     cacheName: 'assets-cache',
@@ -39,9 +45,22 @@ registerRoute(
         statuses: [0, 200],
       }),
       new ExpirationPlugin({
+        maxEntries: 60,
         maxAgeSeconds: 30 * 24 * 60 * 60,
       }),
     ],
   })
 );
 
+self.addEventListener('install', event => {
+  console.log('Ne Service Worker Installed');
+});
+
+self.addEventListener('fetch', event => {
+  event.respondWith(
+    caches.match(event.request)
+      .then(response => {
+        return response || fetch(event.request);
+      })
+  );
+});
