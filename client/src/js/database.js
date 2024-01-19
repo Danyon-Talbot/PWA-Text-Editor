@@ -14,30 +14,43 @@ const initdb = async () =>
 
 // TODO: Add logic to a method that accepts some content and adds it to the database
 export const putDb = async (content) => {
+  console.log('Actual putDb call - Content being saved/updated:', content);
+  if (!content) {
+    console.error('Error: Actual putDb call - content is undefined or null');
+    return;
+  }
+
   try {
-    const db = await initdb();
-    const transaction = db.transaction('jate', 'readwrite');
-    const noteStore = transaction.objectStore('notes');
-    await noteStore.add(note);
-    console.log('Note Added');
+    const db = await openDB('jate', 1);
+    const tx = db.transaction('jate', 'readwrite');
+    const store = tx.objectStore('jate');
+
+    const storedNotes = { text: content }
+    const result = await store.put(storedNotes);
+    console.log('Actual putDb call - Save/update result:', result);
+    await tx.done;
   } catch (error) {
-    console.error('Error Adding Notes', error);
+    console.error('Error during actual putDb call:', error);
+    // Log the full error object for more detailed information
+    console.error(error);
   }
 };
 
 // TODO: Add logic for a method that gets all the content from the database
 export const getDb = async () => {
   try {
-    const db = await initdb();
-    const transaction = db.transaction('notes', 'readonly');
-    const noteStore = transaction.objectStore('notes');
-    const allNotes = await noteStore.getAll();
-    console.log('All Notes Retrieved');
+    // Make sure this version number matches the one used in initdb
+    const db = await openDB('jate', 1); 
+    const tx = db.transaction('jate', 'readonly');
+    const store = tx.objectStore('jate');
+    const allNotes = await store.getAll();
+    console.log('All Notes Retrieved', allNotes);
     return allNotes;
   } catch (error) {
     console.error("Error Retrieving All Notes", error);
-    return [];
   }
 };
 
+
 initdb();
+//testAddToDb();
