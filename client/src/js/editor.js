@@ -2,9 +2,12 @@
 import { getDb, putDb } from './database';
 import { header } from './header';
 
+console.log('Imported Header', header);
+
 export default class {
   constructor() {
     const localData = localStorage.getItem('content');
+    console.log('Locally Stored Content', localData);
 
     // check if CodeMirror is loaded
     if (typeof CodeMirror === 'undefined') {
@@ -26,18 +29,36 @@ export default class {
     // Fall back to localStorage if nothing is stored in indexeddb, and if neither is available, set the value to header.
     getDb().then((data) => {
       console.info('Loaded data from IndexedDB, injecting into editor');
-      const noteContent = data.length > 0 ? data[0].text : '';
-      this.editor.setValue(noteContent || localData || header);
-    })
-
-    this.editor.on('change', () => {
-      localStorage.setItem('content', this.editor.getValue());
+    
+      let contentToDisplay;
+    
+      if (data && data.text) {
+        // Data is present in IndexedDB
+        contentToDisplay = data.text;
+      } else {
+        // No data in IndexedDB, check localStorage
+        const localData = localStorage.getItem('content');
+        if (localData) {
+          contentToDisplay = localData;
+        } else {
+          // No data in localStorage either, use the header
+          contentToDisplay = header;
+        }
+      }
+    
+      this.editor.setValue(contentToDisplay);
+    }).catch(error => {
+      console.error("Error loading data from IndexedDB:", error);
+      // In case of an error, fallback to localStorage or header
+      const localData = localStorage.getItem('content');
+      this.editor.setValue(localData || header);
     });
 
     // Save the content of the editor when the editor itself is loses focus
     this.editor.on('blur', () => {
       console.log('The editor has lost focus');
-      putDb(localStorage.getItem('content'));
+      const currentContent = this.editor.getValue();
+      putDb(currentContent);
     });
   }
 }
