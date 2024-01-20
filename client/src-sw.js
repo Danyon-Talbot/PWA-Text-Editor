@@ -4,7 +4,6 @@ const { registerRoute } = require('workbox-routing');
 const { CacheableResponsePlugin } = require('workbox-cacheable-response');
 const { ExpirationPlugin } = require('workbox-expiration');
 const { precacheAndRoute } = require('workbox-precaching/precacheAndRoute');
-console.log("Service Worker Installed");
 
 precacheAndRoute(self.__WB_MANIFEST);
 
@@ -53,8 +52,9 @@ registerRoute(
 );
 
 self.addEventListener('install', event => {
-  console.log('Ne Service Worker Installed');
+  console.log('New Service Worker Installed');
 });
+
 
 self.addEventListener('fetch', event => {
   event.respondWith(
