@@ -16,6 +16,7 @@ const initdb = async () =>
 export const putDb = async (content) => {
   console.log('Actual putDb call - Content being saved/updated:', content);
   if (!content) {
+    console.log(content);
     console.error('Error: Actual putDb call - content is undefined or null');
     return;
   }
@@ -44,7 +45,7 @@ export const getDb = async () => {
     const tx = db.transaction('jate', 'readonly');
     const store = tx.objectStore('jate');
     const result = await store.get(1); // Get only the entry with id 1
-    console.log('Note Retrieved', result);
+    console.log('Notes Retrieved', result);
     return result;
   } catch (error) {
     console.error("Error Retrieving Note", error);
